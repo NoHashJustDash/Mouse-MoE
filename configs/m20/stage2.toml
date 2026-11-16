@@ -1,0 +1,87 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# m20 stage 2: m20's raw step-500k weights and optimizer state (--fork-from), trained on
+# to step 750k on the 22 test80 shards with pure BT4 targets and no test90 game targets,
+# M1's order (game/mixed targets first, then pure BT4). The learning rate re-warms from
+# 5e-5 to 1.58e-4 over 2,000 steps, holds to 625k, then 5e-5 to 700k and 1.58e-5 to 750k;
+# SWA averages only the low-rate part, 625k-750k (1,251 snapshots). ~11 h at m20's
+# 6,400 positions/s. Runs in runs/m20-stage2.
+name = "m20-stage2"
+# Shape, measured with mouse_moe.benchmark on the RTX 5070 (2026-10-27, batch 1024):
+# this one 6,216 positions/s (7.1 GiB, ~23 h for 500k steps); 16 x 128 top-4 over 10
+# layers 1,276 (10.7 GiB, past the card's memory); 8 x 256 top-2 over 10 layers 4,976.
+
+[model]
+d_model = 320
+layers = 8
+heads = 10
+
+ffn = "moe"
+
+[model.gab]
+compress = 16
+hidden = 64
+per_head = 64
+
+[model.moe]
+experts = 16
+top_k = 2
+expert_hidden = 160
+shared_hidden = 320
+routing = "token"
+
+[data]
+directory = "data/test80"
+train_shards = [
+    "training-run1-test80-20240401-0017.tar",
+    "training-run1-test80-20240401-0117.tar",
+    "training-run1-test80-20240401-0217.tar",
+    "training-run1-test80-20240401-0317.tar",
+    "training-run1-test80-20240401-0417.tar",
+    "training-run1-test80-20240401-0517.tar",
+    "training-run1-test80-20240401-0617.tar",
+    "training-run1-test80-20240401-0717.tar",
+    "training-run1-test80-20240401-0817.tar",
+    "training-run1-test80-20240401-0917.tar",
+    "training-run1-test80-20240401-1017.tar",
+    "training-run1-test80-20240401-1117.tar",
+    "training-run1-test80-20240401-1217.tar",
+    "training-run1-test80-20240401-1317.tar",
+    "training-run1-test80-20240401-1417.tar",
+    "training-run1-test80-20240401-1517.tar",
+    "training-run1-test80-20240401-1617.tar",
+    "training-run1-test80-20240401-1717.tar",
+    "training-run1-test80-20240401-1817.tar",
+    "training-run1-test80-20240401-1917.tar",
+    "training-run1-test80-20240401-2017.tar",
+    "training-run1-test80-20240401-2117.tar",
+]
+validation_shards = ["training-run1-test80-20240401-2317.tar"]
+test_shards = ["training-run1-test80-20240401-2217.tar"]
+workers = 2
+readers_per_worker = 4
+shuffle_buffer = 300000
+sample_rate = 0.5
+teacher_labels = "data/test80/labels/bt4-it332"
+# Targets: BT4 (it332) only.
+teacher_weight = 1.0
+teacher_temperature = 1.0
+# Mirror castling-free positions at random; keep plies 0-9 at 40% (70% of them repeat).
+mirror = true
+opening_plies = 10
+opening_keep = 0.4
+[train]
+batch_size = 1024
+steps = 750000
+warmup_steps = 1000
+lr = 5e-4
+lr_boundaries = [400000, 466000, 500000, 625000, 700000]
+lr_factors = [0.316, 0.1, 0.316, 0.1, 0.0316]
+rewarm_start = 500000
+rewarm_steps = 2000
+rewarm_from = 0.1
+swa_start = 625000
+swa_every = 100
+validate_every = 25000
+validation_batches = 50
+checkpoint_every = 25000
+compile = true

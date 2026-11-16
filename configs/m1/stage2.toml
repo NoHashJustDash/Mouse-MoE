@@ -1,0 +1,73 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# M1, stage 2 of 2: starts from stage 1's step-500k SWA weights (--init-from) and trains
+# 250k steps on BT4-it332 targets over the same 22 shards (about 1.4 views per position).
+# Schedule as ab_kd_m1t60 (lr 2.5e-4), stretched: drops at 80% and 93%, SWA from halfway.
+# Runs in runs/m1/stage2; this is the M1 net.
+name = "m1/stage2"
+
+[model]
+d_model = 256
+layers = 8
+heads = 8
+
+ffn = "moe"
+
+[model.gab]
+compress = 16
+hidden = 64
+per_head = 64
+
+[model.moe]
+experts = 16
+top_k = 2
+expert_hidden = 128
+shared_hidden = 256
+routing = "token"
+
+[data]
+directory = "data/test80"
+train_shards = [
+    "training-run1-test80-20240401-0017.tar",
+    "training-run1-test80-20240401-0117.tar",
+    "training-run1-test80-20240401-0217.tar",
+    "training-run1-test80-20240401-0317.tar",
+    "training-run1-test80-20240401-0417.tar",
+    "training-run1-test80-20240401-0517.tar",
+    "training-run1-test80-20240401-0617.tar",
+    "training-run1-test80-20240401-0717.tar",
+    "training-run1-test80-20240401-0817.tar",
+    "training-run1-test80-20240401-0917.tar",
+    "training-run1-test80-20240401-1017.tar",
+    "training-run1-test80-20240401-1117.tar",
+    "training-run1-test80-20240401-1217.tar",
+    "training-run1-test80-20240401-1317.tar",
+    "training-run1-test80-20240401-1417.tar",
+    "training-run1-test80-20240401-1517.tar",
+    "training-run1-test80-20240401-1617.tar",
+    "training-run1-test80-20240401-1717.tar",
+    "training-run1-test80-20240401-1817.tar",
+    "training-run1-test80-20240401-1917.tar",
+    "training-run1-test80-20240401-2017.tar",
+    "training-run1-test80-20240401-2117.tar",
+]
+validation_shards = ["training-run1-test80-20240401-2317.tar"]
+test_shards = ["training-run1-test80-20240401-2217.tar"]
+workers = 2
+readers_per_worker = 4
+shuffle_buffer = 300000
+sample_rate = 0.5
+teacher_labels = "data/test80/labels/bt4-it332"
+
+[train]
+batch_size = 1024
+steps = 250000
+warmup_steps = 1000
+lr = 2.5e-4
+lr_boundaries = [200000, 233000]
+lr_factors = [0.316, 0.1]
+swa_start = 125000
+swa_every = 100
+validate_every = 25000
+validation_batches = 50
+checkpoint_every = 25000
+compile = true

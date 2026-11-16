@@ -1,0 +1,71 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# The first 46.0M-parameter design (never trained to release): 46.0M parameters, ~1.26x T1 compute per position.
+# Trains on Stage A (one day of test80). Stage B data is recommended before a
+# release-quality run; extend data.train_shards when it is downloaded.
+name = "m1-46m-stage-a"
+
+[model]
+d_model = 384
+layers = 12
+heads = 12
+ffn = "moe"
+
+[model.moe]
+experts = 16
+top_k = 2
+expert_hidden = 192
+shared_hidden = 384
+routing = "token"
+
+[data]
+directory = "data/test80"
+train_shards = [
+    "training-run1-test80-20240401-0017.tar",
+    "training-run1-test80-20240401-0117.tar",
+    "training-run1-test80-20240401-0217.tar",
+    "training-run1-test80-20240401-0317.tar",
+    "training-run1-test80-20240401-0417.tar",
+    "training-run1-test80-20240401-0517.tar",
+    "training-run1-test80-20240401-0617.tar",
+    "training-run1-test80-20240401-0717.tar",
+    "training-run1-test80-20240401-0817.tar",
+    "training-run1-test80-20240401-0917.tar",
+    "training-run1-test80-20240401-1017.tar",
+    "training-run1-test80-20240401-1117.tar",
+    "training-run1-test80-20240401-1217.tar",
+    "training-run1-test80-20240401-1317.tar",
+    "training-run1-test80-20240401-1417.tar",
+    "training-run1-test80-20240401-1517.tar",
+    "training-run1-test80-20240401-1617.tar",
+    "training-run1-test80-20240401-1717.tar",
+    "training-run1-test80-20240401-1817.tar",
+    "training-run1-test80-20240401-1917.tar",
+    "training-run1-test80-20240401-2017.tar",
+    "training-run1-test80-20240401-2117.tar",
+]
+validation_shards = ["training-run1-test80-20240401-2317.tar"]
+test_shards = ["training-run1-test80-20240401-2217.tar"]
+# 2 loader workers: they stream ~35k positions/s against ~3.5k needed, and each
+# worker commits ~1.7 GB (PyTorch import + shuffle buffer) inside the job memory limit.
+workers = 2
+readers_per_worker = 22
+shuffle_buffer = 300000
+sample_rate = 0.5
+
+[train]
+# Batch 1024 needs more than the RTX 5070's 12 GB (measured 2026-10-18), so each
+# optimizer step accumulates two micro-batches of 512. That keeps the reference
+# recipe exactly: 1024 positions per step, 200k steps, lr 5e-4, and one routing
+# bias update and one weight-decay step per 1024 positions.
+batch_size = 1024
+grad_accum_steps = 2
+steps = 200000
+warmup_steps = 2000
+lr = 5e-4
+lr_boundaries = [160000, 185000]
+lr_factors = [0.316, 0.1]
+swa_start = 100000
+swa_every = 100
+validate_every = 5000
+validation_batches = 50
+checkpoint_every = 5000

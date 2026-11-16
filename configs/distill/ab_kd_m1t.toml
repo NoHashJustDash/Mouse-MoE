@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# BT4 distillation A/B on the 13M token-MoE (ab_m1 model, per-ply hash sampling), 30k steps
+# on four Stage A hours (~31.4M positions; two half-rate passes see each position once).
+# M1T fine-tune: starts from ab_m1 (M1T, 60k steps on game targets; SWA weights) with
+# --init-from, then trains 10k steps on BT4-it332 labels with a fresh, lower schedule.
+name = "ab_kd_m1t"
+
+[model]
+d_model = 256
+layers = 8
+heads = 8
+
+ffn = "moe"
+
+[model.gab]
+compress = 16
+hidden = 64
+per_head = 64
+
+[model.moe]
+experts = 16
+top_k = 2
+expert_hidden = 128
+shared_hidden = 256
+routing = "token"
+
+[data]
+directory = "data/test80"
+train_shards = [
+    "training-run1-test80-20240401-0017.tar",
+    "training-run1-test80-20240401-0117.tar",
+    "training-run1-test80-20240401-0217.tar",
+    "training-run1-test80-20240401-0317.tar",
+]
+validation_shards = ["training-run1-test80-20240401-2317.tar"]
+test_shards = ["training-run1-test80-20240401-2217.tar"]
+workers = 2
+readers_per_worker = 4
+shuffle_buffer = 300000
+sample_rate = 0.5
+teacher_labels = "data/test80/labels/bt4-it332"
+
+[train]
+batch_size = 1024
+steps = 10000
+warmup_steps = 500
+lr = 2.5e-4
+lr_boundaries = [7000, 9000]
+lr_factors = [0.316, 0.1]
+swa_start = 5000
+swa_every = 100
+validate_every = 2500
+validation_batches = 50
+checkpoint_every = 2500

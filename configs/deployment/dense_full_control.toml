@@ -1,0 +1,65 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Full-size dense control: same body as m1_46m but a dense FFN of width 768,
+# i.e. the same per-token compute without experts (~21.1M parameters). It answers
+# whether MoE, not just retraining, is what improves on T1.
+name = "dense_full_control"
+
+[model]
+d_model = 384
+layers = 12
+heads = 12
+ffn = "dense"
+dense_hidden = 768
+
+[model.moe]
+experts = 16
+top_k = 2
+expert_hidden = 192
+shared_hidden = 384
+routing = "token"
+
+[data]
+directory = "data/test80"
+train_shards = [
+    "training-run1-test80-20240401-0017.tar",
+    "training-run1-test80-20240401-0117.tar",
+    "training-run1-test80-20240401-0217.tar",
+    "training-run1-test80-20240401-0317.tar",
+    "training-run1-test80-20240401-0417.tar",
+    "training-run1-test80-20240401-0517.tar",
+    "training-run1-test80-20240401-0617.tar",
+    "training-run1-test80-20240401-0717.tar",
+    "training-run1-test80-20240401-0817.tar",
+    "training-run1-test80-20240401-0917.tar",
+    "training-run1-test80-20240401-1017.tar",
+    "training-run1-test80-20240401-1117.tar",
+    "training-run1-test80-20240401-1217.tar",
+    "training-run1-test80-20240401-1317.tar",
+    "training-run1-test80-20240401-1417.tar",
+    "training-run1-test80-20240401-1517.tar",
+    "training-run1-test80-20240401-1617.tar",
+    "training-run1-test80-20240401-1717.tar",
+    "training-run1-test80-20240401-1817.tar",
+    "training-run1-test80-20240401-1917.tar",
+    "training-run1-test80-20240401-2017.tar",
+    "training-run1-test80-20240401-2117.tar",
+]
+validation_shards = ["training-run1-test80-20240401-2317.tar"]
+test_shards = ["training-run1-test80-20240401-2217.tar"]
+workers = 6
+readers_per_worker = 4
+shuffle_buffer = 300000
+sample_rate = 0.5
+
+[train]
+batch_size = 1024
+steps = 200000
+warmup_steps = 2000
+lr = 5e-4
+lr_boundaries = [160000, 185000]
+lr_factors = [0.316, 0.1]
+swa_start = 100000
+swa_every = 100
+validate_every = 5000
+validation_batches = 50
+checkpoint_every = 5000

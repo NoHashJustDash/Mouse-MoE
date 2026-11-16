@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# Top-level pins for the training environment (Python 3.12, Windows x64).
+# PyTorch is installed separately by scripts/setup.ps1, from the official CUDA 12.8
+# index only (torch==2.9.1+cu128; sm_120 / RTX 50-series support). 2.9.1 is pinned
+# because the engine contract uses the TorchScript ONNX exporter (dynamo=False),
+# which newer releases are phasing out.
+# setup.ps1 records the full resolved set in requirements-train.lock (pip freeze).
+numpy==2.2.6
+onnx==1.18.0
+onnxruntime==1.22.0
+hatchling==1.27.0
+editables==0.5
+pytest==8.3.5
+ruff==0.11.12
+mypy==1.15.0
+# Triton for train.compile (torch.compile): the Windows port, 3.5 line for PyTorch 2.9.
+triton-windows==3.5.1.post24

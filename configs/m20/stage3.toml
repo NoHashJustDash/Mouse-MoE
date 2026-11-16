@@ -1,0 +1,68 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# m20 stage 3: fine-tunes M1.5 (--init-from runs/m20-stage2/checkpoints/step_0750000.pt,
+# whose SWA weights are the released net) on BT4 (it332) network labels for five test90
+# hours no Mouse net has trained on (11.8M positions, docs/DATA.md "Hours for BT4 search
+# labels"). Labelled exactly like test80 for stages 1-2: one BT4 forward pass per
+# position with mouse_moe.label_teacher, no search. 20,000 steps x 1,024 = 20.5M samples,
+# about 1.7 per position (stage 1: 1.8). Warm up to 1.58e-4 and hold to 10k, then 5e-5 to
+# 16k and 1.58e-5 to 20k; SWA averages the lower-rate half (101 snapshots).
+# Validation uses the held-out test90 hour 2025-11-06 08:17 on its game targets.
+# Runs in runs/m20-stage3.
+name = "m20-stage3"
+
+[model]
+d_model = 320
+layers = 8
+heads = 10
+
+ffn = "moe"
+
+[model.gab]
+compress = 16
+hidden = 64
+per_head = 64
+
+[model.moe]
+experts = 16
+top_k = 2
+expert_hidden = 160
+shared_hidden = 320
+routing = "token"
+
+[data]
+directory = "data/test90"
+train_shards = [
+    "training-run3-test90-20251021-0717.tar",
+    "training-run3-test90-20251026-0617.tar",
+    "training-run3-test90-20251031-0617.tar",
+    "training-run3-test90-20251103-1417.tar",
+    "training-run3-test90-20251105-1217.tar",
+]
+validation_shards = ["training-run3-test90-20251106-0817.tar"]
+test_shards = ["training-run3-test90-20251106-0917.tar"]
+workers = 2
+readers_per_worker = 4
+shuffle_buffer = 300000
+sample_rate = 0.5
+teacher_labels = "data/test90/labels/bt4-it332"
+# Targets: BT4 (it332) only, as stage 2.
+teacher_weight = 1.0
+teacher_temperature = 1.0
+# Mirror castling-free positions at random; keep plies 0-9 at 40% (70% of them repeat).
+mirror = true
+opening_plies = 10
+opening_keep = 0.4
+
+[train]
+batch_size = 1024
+steps = 20000
+warmup_steps = 2000
+lr = 1.58e-4
+lr_boundaries = [10000, 16000]
+lr_factors = [0.316, 0.1]
+swa_start = 10000
+swa_every = 100
+validate_every = 5000
+validation_batches = 50
+checkpoint_every = 5000
+compile = true

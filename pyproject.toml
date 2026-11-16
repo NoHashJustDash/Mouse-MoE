@@ -1,0 +1,40 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mouse-moe"
+version = "0.1.0"
+description = "Mixture-of-Experts network architecture and training for the Mouse chess engine"
+license = "GPL-3.0-or-later"
+requires-python = "==3.12.*"
+dependencies = []
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mouse_moe"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--strict-markers"
+markers = [
+    "torch: needs PyTorch (installed by scripts/setup.ps1)",
+    "data: needs downloaded Lc0 training data under data/ (see docs/DATA.md)",
+    "tensorrt: needs CUDA, TensorRT and the Mouse engine's mouse_moe_trt plugin (MOUSE_MOE_PLUGIN)",
+    "lc0: needs lc0 (MOUSE_MOE_LC0) and the BT4 weights (MOUSE_MOE_BT4)",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "RUF", "N"]
+# `import torch.nn.functional as F` is the PyTorch convention.
+ignore = ["N812"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"

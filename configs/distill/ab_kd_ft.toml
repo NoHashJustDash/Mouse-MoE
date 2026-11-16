@@ -1,0 +1,54 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# BT4 distillation A/B on the 13M token-MoE (ab_m1 model, per-ply hash sampling), 30k steps
+# on four Stage A hours (~31.4M positions; two half-rate passes see each position once).
+# Distill-then-fine-tune arm: forked from ab_kd_teacher at step 20000 (--fork-from), then
+# the games' own targets for the last 10k steps. Identical to ab_kd_teacher otherwise.
+name = "ab_kd_ft"
+
+[model]
+d_model = 256
+layers = 8
+heads = 8
+
+ffn = "moe"
+
+[model.gab]
+compress = 16
+hidden = 64
+per_head = 64
+
+[model.moe]
+experts = 16
+top_k = 2
+expert_hidden = 128
+shared_hidden = 256
+routing = "token"
+
+[data]
+directory = "data/test80"
+train_shards = [
+    "training-run1-test80-20240401-0017.tar",
+    "training-run1-test80-20240401-0117.tar",
+    "training-run1-test80-20240401-0217.tar",
+    "training-run1-test80-20240401-0317.tar",
+]
+validation_shards = ["training-run1-test80-20240401-2317.tar"]
+test_shards = ["training-run1-test80-20240401-2217.tar"]
+workers = 2
+readers_per_worker = 4
+shuffle_buffer = 300000
+sample_rate = 0.5
+
+
+[train]
+batch_size = 1024
+steps = 30000
+warmup_steps = 1000
+lr = 5e-4
+lr_boundaries = [24000, 28000]
+lr_factors = [0.316, 0.1]
+swa_start = 20000
+swa_every = 100
+validate_every = 5000
+validation_batches = 50
+checkpoint_every = 5000

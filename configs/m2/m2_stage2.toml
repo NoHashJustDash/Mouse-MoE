@@ -1,0 +1,145 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# M2.0 stage B: stage A's raw step-500k weights and optimizer state (--fork-from
+# runs/m2/checkpoints/step_0500000.pt), trained on to step 750k with pure BT4 targets on
+# all of stage A's data: the 22 test80 hours and the 53 BT4-labelled test90 hours. The
+# schedule is M1.5's stage 2 (configs/m20/stage2.toml): re-warm from 5e-5 to 1.58e-4
+# over 2,000 steps, hold to 625k, then 5e-5 to 700k and 1.58e-5 to 750k, with SWA over
+# 625k-750k. ~11 h. Runs in runs/m2-stage2.
+name = "m2-stage2"
+# Shape, measured with mouse_moe.benchmark on the RTX 5070 (2026-10-27, batch 1024):
+# this one 6,216 positions/s (7.1 GiB, ~23 h for 500k steps); 16 x 128 top-4 over 10
+# layers 1,276 (10.7 GiB, past the card's memory); 8 x 256 top-2 over 10 layers 4,976.
+
+[model]
+d_model = 320
+layers = 8
+heads = 10
+
+ffn = "moe"
+
+[model.gab]
+compress = 16
+hidden = 64
+per_head = 64
+
+[model.moe]
+experts = 16
+top_k = 2
+expert_hidden = 160
+shared_hidden = 320
+routing = "token"
+
+[data]
+directory = "data/test80"
+train_shards = [
+    "training-run1-test80-20240401-0017.tar",
+    "training-run1-test80-20240401-0117.tar",
+    "training-run1-test80-20240401-0217.tar",
+    "training-run1-test80-20240401-0317.tar",
+    "training-run1-test80-20240401-0417.tar",
+    "training-run1-test80-20240401-0517.tar",
+    "training-run1-test80-20240401-0617.tar",
+    "training-run1-test80-20240401-0717.tar",
+    "training-run1-test80-20240401-0817.tar",
+    "training-run1-test80-20240401-0917.tar",
+    "training-run1-test80-20240401-1017.tar",
+    "training-run1-test80-20240401-1117.tar",
+    "training-run1-test80-20240401-1217.tar",
+    "training-run1-test80-20240401-1317.tar",
+    "training-run1-test80-20240401-1417.tar",
+    "training-run1-test80-20240401-1517.tar",
+    "training-run1-test80-20240401-1617.tar",
+    "training-run1-test80-20240401-1717.tar",
+    "training-run1-test80-20240401-1817.tar",
+    "training-run1-test80-20240401-1917.tar",
+    "training-run1-test80-20240401-2017.tar",
+    "training-run1-test80-20240401-2117.tar",
+]
+validation_shards = ["training-run1-test80-20240401-2317.tar"]
+test_shards = ["training-run1-test80-20240401-2217.tar"]
+workers = 2
+readers_per_worker = 4
+shuffle_buffer = 300000
+sample_rate = 0.5
+teacher_labels = "data/test80/labels/bt4-it332"
+# Targets: BT4 (it332) only.
+teacher_weight = 1.0
+teacher_temperature = 1.0
+# Mirror castling-free positions at random; keep plies 0-9 at 40% (70% of them repeat).
+mirror = true
+opening_plies = 10
+opening_keep = 0.4
+# The test90 hours keep their BT4 labels here too.
+game_directory = "data/test90"
+game_shards = [
+    "training-run3-test90-20251017-1817.tar",
+    "training-run3-test90-20251018-0417.tar",
+    "training-run3-test90-20251018-1417.tar",
+    "training-run3-test90-20251019-0017.tar",
+    "training-run3-test90-20251019-1017.tar",
+    "training-run3-test90-20251019-2017.tar",
+    "training-run3-test90-20251020-0617.tar",
+    "training-run3-test90-20251020-1617.tar",
+    "training-run3-test90-20251021-0217.tar",
+    "training-run3-test90-20251021-0717.tar",
+    "training-run3-test90-20251021-1217.tar",
+    "training-run3-test90-20251021-2217.tar",
+    "training-run3-test90-20251022-0817.tar",
+    "training-run3-test90-20251022-1817.tar",
+    "training-run3-test90-20251023-0446.tar",
+    "training-run3-test90-20251023-1449.tar",
+    "training-run3-test90-20251023-2317.tar",
+    "training-run3-test90-20251024-0917.tar",
+    "training-run3-test90-20251024-1917.tar",
+    "training-run3-test90-20251025-0517.tar",
+    "training-run3-test90-20251025-1517.tar",
+    "training-run3-test90-20251026-0117.tar",
+    "training-run3-test90-20251026-0617.tar",
+    "training-run3-test90-20251026-1117.tar",
+    "training-run3-test90-20251026-2117.tar",
+    "training-run3-test90-20251027-0717.tar",
+    "training-run3-test90-20251027-1717.tar",
+    "training-run3-test90-20251028-0317.tar",
+    "training-run3-test90-20251028-1317.tar",
+    "training-run3-test90-20251028-2317.tar",
+    "training-run3-test90-20251029-0917.tar",
+    "training-run3-test90-20251029-1917.tar",
+    "training-run3-test90-20251030-0517.tar",
+    "training-run3-test90-20251030-1517.tar",
+    "training-run3-test90-20251031-0117.tar",
+    "training-run3-test90-20251031-0617.tar",
+    "training-run3-test90-20251031-1117.tar",
+    "training-run3-test90-20251031-2117.tar",
+    "training-run3-test90-20251101-0717.tar",
+    "training-run3-test90-20251101-1717.tar",
+    "training-run3-test90-20251102-0317.tar",
+    "training-run3-test90-20251102-1317.tar",
+    "training-run3-test90-20251102-2317.tar",
+    "training-run3-test90-20251103-0917.tar",
+    "training-run3-test90-20251103-1417.tar",
+    "training-run3-test90-20251103-1917.tar",
+    "training-run3-test90-20251104-0517.tar",
+    "training-run3-test90-20251104-1517.tar",
+    "training-run3-test90-20251105-0117.tar",
+    "training-run3-test90-20251105-1117.tar",
+    "training-run3-test90-20251105-1217.tar",
+    "training-run3-test90-20251105-2117.tar",
+    "training-run3-test90-20251106-0717.tar",
+]
+game_teacher_labels = "data/test90/labels/bt4-it332"
+[train]
+batch_size = 1024
+steps = 750000
+warmup_steps = 1000
+lr = 5e-4
+lr_boundaries = [400000, 466000, 500000, 625000, 700000]
+lr_factors = [0.316, 0.1, 0.316, 0.1, 0.0316]
+rewarm_start = 500000
+rewarm_steps = 2000
+rewarm_from = 0.1
+swa_start = 625000
+swa_every = 100
+validate_every = 25000
+validation_batches = 50
+checkpoint_every = 25000
+compile = true
