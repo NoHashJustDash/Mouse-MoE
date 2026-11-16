@@ -16,6 +16,7 @@ confident that the new net is better (H1) or that it is not at least 5 Elo bette
 
 | New net | Old net | Result | Games (+ − =) | Decision |
 |---|---|---|---|---|
+| M2.1 | M2.0 | +31.9 ± 13.4 Elo | 634 (+186 −128 =320) | H1, better |
 | M2.0 | M1.5 | +27.2 ± 12.4 Elo | 844 (+235 −169 =440) | H1, better |
 
 ## Against lc0 with T1

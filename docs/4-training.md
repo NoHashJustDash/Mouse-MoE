@@ -83,7 +83,8 @@ Three stages, each one a fork of the last:
 - **The teacher labels mattered most.** M2.0 changed only the data from M1.5: BT4 labels
   on every hour instead of game targets on half of them. That was worth +27.2 ± 12.4 Elo.
 - **Validation loss is a poor guide to strength.** Stage C ended with validation loss
-  slightly above stage B's (3.1127 against 3.1086). Judge every net by games
+  slightly above stage B's (3.1127 against 3.1086), yet its net, M2.1, beat stage B's by
+  +31.9 ± 13.4 Elo. Judge every net by games
   ([6-export-and-test.md](6-export-and-test.md)), and see [7-results.md](7-results.md).
 - **Runs are not bit-for-bit repeatable:** the data order is reshuffled on resume. Compare
   nets in games, not by a few thousandths of loss.

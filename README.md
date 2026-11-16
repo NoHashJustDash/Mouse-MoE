@@ -45,7 +45,7 @@ a strong net (`--init-from`) instead of starting from zero
 | M1 | [`configs/m1/`](configs/m1) | The first net: 256 wide, 13.2M parameters |
 | M1.5 | [`configs/m20/`](configs/m20) | 19.9M parameters; −38.4 ± 15.1 Elo against lc0 + T1 |
 | M2.0 | [`m2.toml`](configs/m2/m2.toml), [`m2_stage2.toml`](configs/m2/m2_stage2.toml) | +27.2 ± 12.4 Elo over M1.5; −12.3 ± 9.9 against lc0 + T1 |
-| M2.1 | M2.0, then [`m2_stage3.toml`](configs/m2/m2_stage3.toml) | M2.0 trained on from 750k to 900k steps |
+| M2.1 | M2.0, then [`m2_stage3.toml`](configs/m2/m2_stage3.toml) | +31.9 ± 13.4 Elo over M2.0 |
 
 Conditions and every match: [docs/7-results.md](docs/7-results.md). Training M2.1 from
 scratch takes about 40 hours on an RTX 5070, plus about 16 hours of BT4 labelling.
