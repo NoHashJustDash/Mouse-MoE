@@ -66,7 +66,7 @@ scratch takes about 40 hours on an RTX 5070, plus about 16 hours of BT4 labellin
 
 Open an issue for bug reports and feature requests. When you report a training problem,
 include your config and the last lines of `runs\<name>\metrics.jsonl`. If you train a
-stronger net, open an issue with the config and the SPRT result: the
+stronger net, submit it: [CONTRIBUTING.md](CONTRIBUTING.md) says how, and the
 [export and test guide](docs/6-export-and-test.md) shows how to measure one.
 
 ## Made with AI assistance
