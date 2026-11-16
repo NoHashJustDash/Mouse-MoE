@@ -19,7 +19,7 @@ testpaths = ["tests"]
 addopts = "--strict-markers"
 markers = [
     "torch: needs PyTorch (installed by scripts/setup.ps1)",
-    "data: needs downloaded Lc0 training data under data/ (see docs/DATA.md)",
+    "data: needs downloaded Lc0 training data under data/ (see docs/3-data.md)",
     "tensorrt: needs CUDA, TensorRT and the Mouse engine's mouse_moe_trt plugin (MOUSE_MOE_PLUGIN)",
     "lc0: needs lc0 (MOUSE_MOE_LC0) and the BT4 weights (MOUSE_MOE_BT4)",
 ]

@@ -1,0 +1,47 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# A tiny net that trains in minutes on one test80 file, to check your setup end to end:
+# download, train and export. It plays badly; that's expected.
+#   python -I -m mouse_moe.download --config examples\tiny.toml
+#   python -I -m mouse_moe.train --config examples\tiny.toml
+name = "tiny"
+
+[model]
+d_model = 64
+layers = 2
+heads = 4
+ffn = "moe"
+
+[model.gab]
+compress = 8
+hidden = 32
+per_head = 32
+
+[model.moe]
+experts = 4
+top_k = 2
+expert_hidden = 32
+shared_hidden = 64
+routing = "token"
+
+[data]
+directory = "data/test80"
+train_shards = ["training-run1-test80-20240401-0017.tar"]
+validation_shards = ["training-run1-test80-20240401-2317.tar"]
+workers = 2
+readers_per_worker = 2
+shuffle_buffer = 20000
+sample_rate = 0.5
+
+[train]
+batch_size = 256
+steps = 2000
+warmup_steps = 200
+lr = 5e-4
+lr_boundaries = [1600]
+lr_factors = [0.1]
+swa_start = 1000
+swa_every = 50
+validate_every = 1000
+validation_batches = 10
+checkpoint_every = 1000
+balance_calibration_batches = 20

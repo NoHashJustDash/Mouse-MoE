@@ -87,7 +87,7 @@ print(f"{torch.__version__} | {torch.cuda.get_device_name(0)} | sm_{major}{minor
         if ([int]$suite.skipped -ne 0) { throw "$($suite.skipped) test(s) were skipped; the environment is incomplete" }
         Write-Host "All $($suite.tests) tests passed, none skipped."
     }
-    Write-Host 'Environment ready. Next: scripts\benchmark.ps1, then scripts\train.ps1 (see docs\TRAINING.md).'
+    Write-Host 'Environment ready. Next: see docs\2-getting-started.md.'
 } finally {
     Pop-Location
 }

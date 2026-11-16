@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Mouse-MoE: Chessformer-style encoder with Mixture-of-Experts feed-forward layers.
 
-Design: ``docs/ARCHITECTURE.md``. Input/output contract
+Design: ``docs/1-basics.md``. Input/output contract
 matches the Mouse engine (``engine/nn/model_metadata.cpp``): ``planes`` float32
 [B, 112, 8, 8] with the raw rule-50 count in plane 109; outputs ``policy``
 logits [B, 1858], ``wdl`` probabilities [B, 3], ``mlh`` [B, 1] (non-negative).

@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """TensorRT expert-plugin export (markers: torch; tensorrt for the build and comparison)."""
 
-from dataclasses import replace
 import os
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -87,3 +87,11 @@ def test_tensorrt_lib_comes_from_the_environment(
         tensorrt_lib()
     monkeypatch.setenv(TENSORRT_LIB_ENV, str(tmp_path))
     assert tensorrt_lib() == tmp_path
+
+
+@pytest.mark.parametrize("name", ["tiny", "small", "default", "large"])
+def test_every_example_fits_the_engine_plugin(name: str) -> None:
+    from mouse_moe.export_plugin import _routed_layers
+
+    model = MouseMoe(load_config(ROOT / "examples" / f"{name}.toml").model)
+    assert len(_routed_layers(model)) == len(model.layers)

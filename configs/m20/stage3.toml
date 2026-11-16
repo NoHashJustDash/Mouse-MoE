@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # m20 stage 3: fine-tunes M1.5 (--init-from runs/m20-stage2/checkpoints/step_0750000.pt,
 # whose SWA weights are the released net) on BT4 (it332) network labels for five test90
-# hours no Mouse net has trained on (11.8M positions, docs/DATA.md "Hours for BT4 search
-# labels"). Labelled exactly like test80 for stages 1-2: one BT4 forward pass per
+# hours no Mouse net has trained on (11.8M positions).
+# Labelled exactly like test80 for stages 1-2: one BT4 forward pass per
 # position with mouse_moe.label_teacher, no search. 20,000 steps x 1,024 = 20.5M samples,
 # about 1.7 per position (stage 1: 1.8). Warm up to 1.58e-4 and hold to 10k, then 5e-5 to
 # 16k and 1.58e-5 to 20k; SWA averages the lower-rate half (101 snapshots).

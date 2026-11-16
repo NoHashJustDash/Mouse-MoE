@@ -49,7 +49,7 @@ def tensorrt_lib() -> Path:
     if not value:
         raise RuntimeError(
             f"set {TENSORRT_LIB_ENV} to the lib folder of the TensorRT SDK whose Python wheel "
-            "is installed (TensorRT-10.9.0.34\lib)"
+            "is installed (the lib folder of TensorRT-10.9.0.34)"
         )
     path = Path(value)
     if not path.is_dir():

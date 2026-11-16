@@ -32,12 +32,30 @@ The test90 hours are spread over the run's last three weeks, so the games come f
 of the run's nets rather than one day's. The exact files are listed in each
 config's `train_shards` and `game_shards`.
 
-[`manifests/`](../manifests) gives each file's size and SHA-256. Put the archives in
-`data/test80/` and `data/test90/` and copy the matching `MANIFEST.csv` beside them. The
-loader refuses any file whose size or hash doesn't match.
+## Downloading
 
-The hashes were computed from the downloaded files. They are not checksums published by
-the Lc0 project.
+```powershell
+.venv\Scripts\python.exe -I -m mouse_moe.download --config examples\default.toml
+```
+
+This fetches every file the config trains, validates or tests on, into the config's data
+folders:
+
+- **Checked:** each file downloads as `<name>.part` and is renamed only once its size and
+  SHA-256 match [`manifests/`](../manifests). A file that doesn't match is deleted and
+  reported.
+- **Restartable:** a stopped download resumes where it left off, and files already
+  present are checked and skipped.
+- **Recorded:** each data folder gets a `MANIFEST.csv`, which the training loader
+  requires.
+- **Safe for the disk:** it refuses to start unless 10 GiB stays free afterwards.
+
+The whole M2.1 set is 77 files, 60 GiB. The hashes were computed from the downloaded
+files; they are not checksums published by the Lc0 project.
+
+**To use other Lc0 hours:** add their names to a config, and their sizes and SHA-256 to
+`manifests/<run>/MANIFEST.csv`. The tool refuses files that aren't listed, so record
+hashes you have checked yourself.
 
 Check the records before a long run:
 
@@ -67,6 +85,28 @@ For each position it stores:
 During training each target is `teacher_weight × teacher + (1 − teacher_weight) × game`:
 M2's first stage uses 0.5, its later stages 1.0 (BT4 only). The stored data never
 changes.
+
+### Making the labels (about 16 hours on an RTX 5070)
+
+`label_teacher` labels the files in a config's `train_shards`, at about 5,000 positions
+per second. It needs TensorRT and BT4 as ONNX ([2-getting-started.md](2-getting-started.md#4-optional-tools)).
+M2.1's labels come from three runs into two folders:
+
+```powershell
+.venv\Scripts\python.exe -I -m mouse_moe.label_teacher --onnx bt4-it332-f16.onnx --config configs\m2\m2.toml --out data\test80\labels\bt4-it332
+.venv\Scripts\python.exe -I -m mouse_moe.label_teacher --onnx bt4-it332-f16.onnx --config configs\m2\label_test90.toml --out data\test90\labels\bt4-it332
+.venv\Scripts\python.exe -I -m mouse_moe.label_teacher --onnx bt4-it332-f16.onnx --config configs\m20\stage3.toml --out data\test90\labels\bt4-it332
+```
+
+The first labels the 22 test80 hours (about 10 hours), the second 48 test90 hours (about
+6 hours), the third the other 5 test90 hours. A stopped run resumes at the next unfinished
+file.
+
+[`mouse_moe.search_label`](../src/mouse_moe/search_label.py) is the slower alternative:
+it labels positions with real lc0 searches by BT4 instead of a single evaluation. M2.1
+does not use it.
+
+### Changes made while training
 
 Two more steps also never change the stored data:
 - **Mirroring:** positions where neither side can still castle are mirrored left to

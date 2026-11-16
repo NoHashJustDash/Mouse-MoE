@@ -71,7 +71,7 @@ opening_plies = 10
 opening_keep = 0.4
 # About 103M more positions trained on their games' own targets: 48 Lc0 test90 hours
 # spread evenly over 2025-10-17 .. 2025-11-06 (every 10th file of that window; the last
-# two hours, 2025-11-06 08:17 and 09:17, are held out). See docs/DATA.md.
+# two hours, 2025-11-06 08:17 and 09:17, are held out). See docs/3-data.md.
 game_directory = "data/test90"
 game_shards = [
     "training-run3-test90-20251017-1817.tar",

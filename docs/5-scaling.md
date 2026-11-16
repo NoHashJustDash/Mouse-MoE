@@ -77,7 +77,7 @@ When a batch of 1,024 doesn't fit, set `grad_accum_steps` under `[train]`: each 
 adds up the gradients of several smaller micro-batches. The training recipe stays the
 same.
 
-Training caps its own host and GPU memory (see [TRAINING.md](TRAINING.md)), so a net that
+Training caps its own host and GPU memory (see [4-training.md](4-training.md)), so a net that
 doesn't fit stops with an out-of-memory error and doesn't slow the machine down.
 
 ## Search speed

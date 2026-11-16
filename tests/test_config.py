@@ -8,7 +8,7 @@ from conftest import ROOT
 from mouse_moe.budget import parameter_total
 from mouse_moe.config import ConfigError, load_config, load_config_dict, to_dict, validate
 
-CONFIGS = sorted((ROOT / "configs").rglob("*.toml"))
+CONFIGS = sorted((ROOT / "configs").rglob("*.toml")) + sorted((ROOT / "examples").glob("*.toml"))
 
 
 def test_configs_exist() -> None:
@@ -64,3 +64,15 @@ def test_rejects_unknown_keys_and_inconsistency(tmp_path: Path) -> None:
     bad_heads = replace(good, model=replace(good.model, heads=7))
     with pytest.raises(ConfigError, match="divisible"):
         validate(bad_heads)
+
+
+def test_the_examples_exist() -> None:
+    assert {"tiny", "small", "default", "large"} <= {path.stem for path in CONFIGS}
+
+
+def test_the_default_example_is_m2s_first_stage() -> None:
+    example = to_dict(load_config(ROOT / "examples" / "default.toml"))
+    stage_a = to_dict(load_config(ROOT / "configs" / "m2" / "m2.toml"))
+    example.pop("name")
+    stage_a.pop("name")
+    assert example == stage_a

@@ -43,7 +43,9 @@ def _planes(count: int) -> "torch.Tensor":
 
 
 @pytest.mark.parametrize(
-    "path", sorted((ROOT / "configs").rglob("*.toml")), ids=lambda p: p.stem
+    "path",
+    sorted((ROOT / "configs").rglob("*.toml")) + sorted((ROOT / "examples").glob("*.toml")),
+    ids=lambda p: p.stem,
 )
 def test_parameter_count_matches_budget_module(path) -> None:  # type: ignore[no-untyped-def]
     config = load_config(path)
