@@ -29,6 +29,7 @@ All results are from 10+0.1 matches on one machine, with the conditions in
 - [Training](docs/TRAINING.md): setup, labelling, the three training stages and export.
 - [Data](docs/DATA.md): which Lc0 files are used, how they are checked, and the licence.
 - [Results](docs/RESULTS.md): every match, with conditions.
+- [Scaling up](docs/SCALING.md): what to change for a larger net, and the engine's limits.
 - [References](docs/REFERENCES.md): the papers and projects each idea comes from.
 
 ## Quick start
