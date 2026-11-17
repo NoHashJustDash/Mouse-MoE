@@ -29,6 +29,9 @@ lc0 played Lc0's T1-256x10-distilled-swa-2432500 net, 20.2M parameters.
 | M1.5 | −44.1 ± 17.1 Elo | 412 | SPRT [0, 5], H0 |
 | M2.0 | −12.3 ± 9.9 Elo | 1,358 (+303 −351 =704) | SPRT [0, 5], H0 |
 
+M2.1 has not been measured against lc0 with T1 yet. Its result will be added here when
+that match is complete.
+
 These compare engine and net together. With the same T1 net, Mouse 1.0.0 was
 −59.6 ± 12.3 Elo against lc0, so part of each gap above is the engine, not the net.
 

@@ -43,8 +43,9 @@ All three need the same model shape as the checkpoint.
 
 - **Resuming** restores the model, optimiser, schedule and weight averages exactly. The
   data order is reshuffled, not replayed.
-- **`--init-from`** with M2.1's checkpoint (published with each release) is the cheapest
-  way to try new data or targets: you start from a strong net instead of from zero.
+- **`--init-from`** with M2.1's checkpoint is the cheapest way to try new data or targets:
+  you start from a strong net instead of from zero. The checkpoint will be published with
+  Mouse 2.0.0, which is not released yet.
 - **Checkpoints are Python pickles,** and loading one can run code. Only load checkpoints
   from sources you trust, and check a release checkpoint's SHA-256 against its release
   notes.
