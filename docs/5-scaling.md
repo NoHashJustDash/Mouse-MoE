@@ -83,6 +83,7 @@ doesn't fit stops with an out-of-memory error and doesn't slow the machine down.
 ## Search speed
 
 Engine strength depends on how many positions it searches in its time, not only on the
-net's quality. M2.1 uses 8.4M parameters per square against T1's 20.2M, yet searched only
-about 14% faster than lc0 with T1. A net that is better per position but much slower can
-still lose games. Compare nets in matches at the time control you care about.
+net's quality. M2.0, which has the same shape as M2.1, uses 8.4M parameters per square
+against T1's 20.2M, yet searched only about 14% faster than lc0 with T1. A net that is
+better per position but much slower can still lose games. Compare nets in matches at the
+time control you care about.
