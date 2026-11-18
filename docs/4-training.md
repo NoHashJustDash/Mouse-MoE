@@ -44,11 +44,12 @@ All three need the same model shape as the checkpoint.
 - **Resuming** restores the model, optimiser, schedule and weight averages exactly. The
   data order is reshuffled, not replayed.
 - **`--init-from`** with M2.1's checkpoint is the cheapest way to try new data or targets:
-  you start from a strong net instead of from zero. The checkpoint will be published with
-  Mouse 2.0.0, which is not released yet.
+  you start from a strong net instead of from zero. The checkpoint is `M2.1-checkpoint.pt`
+  in the [Mouse 2.0.0 release](https://github.com/NoHashJustDash/Mouse/releases/tag/v2.0.0): step 900,000,
+  with the model shape of `configs/m2/m2_stage3.toml`.
 - **Checkpoints are Python pickles,** and loading one can run code. Only load checkpoints
-  from sources you trust, and check a release checkpoint's SHA-256 against its release
-  notes.
+  from sources you trust, and check a release checkpoint's SHA-256 against the
+  `SHA256SUMS` file of its release.
 
 ## How M2.1 was trained
 

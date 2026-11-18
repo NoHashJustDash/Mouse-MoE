@@ -5,9 +5,10 @@ All matches ran on one machine (GeForce RTX 5070, Ryzen 7 7800X3D), one game at 
 `UHO_Lichess_4852_v1.epd`, and each one is played twice, once with each colour. Margins
 are 95% confidence intervals.
 
-Every Mouse player is the [Mouse engine](https://github.com/NoHashJustDash/Mouse) at the
-same build and the same search settings; only the net changes. lc0 is v0.32.1 at its
-default settings.
+Every Mouse player is the [Mouse engine](https://github.com/NoHashJustDash/Mouse) at its
+default search settings. All matches but one ran the Mouse 1.1.0 engine, so only the net
+changes between them; the M2.1 match against lc0 ran the Mouse 2.0.0 engine. lc0 is
+v0.32.1 at its default settings.
 
 ## Mouse-MoE nets against each other
 
@@ -28,9 +29,11 @@ lc0 played Lc0's T1-256x10-distilled-swa-2432500 net, 20.2M parameters.
 | M1.5 | −38.4 ± 15.1 Elo | 600 (+121 −187 =292) | Fixed 600 games, with the Mouse 1.1.0 release |
 | M1.5 | −44.1 ± 17.1 Elo | 412 | SPRT [0, 5], H0 |
 | M2.0 | −12.3 ± 9.9 Elo | 1,358 (+303 −351 =704) | SPRT [0, 5], H0 |
+| M2.1 | +33.1 ± 13.8 Elo | 632 (+183 −123 =326) | SPRT [0, 5], H1, with the Mouse 2.0.0 engine |
 
-M2.1 has not been measured against lc0 with T1 yet. Its result will be added here when
-that match is complete.
+The M2.1 row is not a like-for-like step from the M2.0 row. It ran the Mouse 2.0.0
+engine, which searches 22% more positions in the same time than the 1.1.0 engine the
+other rows used. The net and the engine have not been measured separately against lc0.
 
 These compare engine and net together. With the same T1 net, Mouse 1.0.0 was
 −59.6 ± 12.3 Elo against lc0, so part of each gap above is the engine, not the net.

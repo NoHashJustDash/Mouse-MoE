@@ -34,10 +34,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\setup.ps1
 .venv\Scripts\python.exe -I -m mouse_moe.train --config examples\tiny.toml
 ```
 
-M2.1's training checkpoint will be published with Mouse 2.0.0, which is not released yet.
-From then on you can fine-tune from a strong net (`--init-from`) instead of starting from
-zero ([docs/4-training.md](docs/4-training.md#continuing-forking-and-fine-tuning)). Until
-then, train from scratch with the configs here.
+M2.1's training checkpoint is published with
+[Mouse 2.0.0](https://github.com/NoHashJustDash/Mouse/releases/tag/v2.0.0) as
+`M2.1-checkpoint.pt`, so you can fine-tune from a strong net (`--init-from`) instead of
+starting from zero
+([docs/4-training.md](docs/4-training.md#continuing-forking-and-fine-tuning)).
 
 ## The nets
 
@@ -46,7 +47,7 @@ then, train from scratch with the configs here.
 | M1 | [`configs/m1/`](configs/m1) | The first net: 256 wide, 13.2M parameters |
 | M1.5 | [`configs/m20/`](configs/m20) | 19.9M parameters; −38.4 ± 15.1 Elo against lc0 + T1 |
 | M2.0 | [`m2.toml`](configs/m2/m2.toml), [`m2_stage2.toml`](configs/m2/m2_stage2.toml) | +27.2 ± 12.4 Elo over M1.5; −12.3 ± 9.9 against lc0 + T1 |
-| M2.1 | M2.0, then [`m2_stage3.toml`](configs/m2/m2_stage3.toml) | +31.9 ± 13.4 Elo over M2.0; not yet measured against lc0 + T1 |
+| M2.1 | M2.0, then [`m2_stage3.toml`](configs/m2/m2_stage3.toml) | +31.9 ± 13.4 Elo over M2.0; +33.1 ± 13.8 against lc0 + T1, in the faster Mouse 2.0.0 engine |
 
 Conditions and every match: [docs/7-results.md](docs/7-results.md). Training M2.1 from
 scratch takes about 40 hours on an RTX 5070, plus about 16 hours of BT4 labelling.
